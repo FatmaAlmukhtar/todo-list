@@ -1,0 +1,12 @@
+.task-header {
+    display: flex;
+    gap: 20px;
+    background-color: pink;
+    color: gray;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.task {
+    display: flex;
+}
