@@ -24,4 +24,24 @@ function createTodo(todo) {
 
     return task;
 }
-export {todo, createTodo};
+
+function fetchTodo() {
+
+    const title = document.getElementById('title');
+    const description = document.getElementById('description');
+    const dueDate = document.getElementById('due-date');
+    const priority = document.getElementById('priority');
+    
+    const displayingDiv = document.querySelector('.display');
+
+    let todoObject = todo(
+        title.value,
+        description.value,
+        dueDate.value,
+        priority.value
+    );
+
+    displayingDiv.appendChild(createTodo(todoObject));
+
+}
+export {fetchTodo};
