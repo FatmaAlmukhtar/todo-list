@@ -1,4 +1,6 @@
+import { loadTodos } from "./navigateFolders";
 import {fetchTodo} from "./todos";
+import { displayFolderItems } from "./navigateFolders";
 
 const taskInfo = ['title', 'description', 'due-date', 'priority', 'folder'];
 let folders = ['main'];
@@ -20,6 +22,7 @@ function createTodoForm() {
 
         if(element === 'folder') {
             itemInput = document.createElement('select');
+            itemInput.id = element;
             createDropdown(itemInput, selectedFolder='main');
 
             const newFolder = document.createElement('button');
@@ -62,14 +65,24 @@ function createTodoDisplay() {
     // todos header 
     const header = document.createElement('div');
     header.classList.add('task-header');
-
+    
     taskInfo.forEach(element => {
-        const item = document.createElement('p');
-        item.textContent = element.toUpperCase();
+        let item = document.createElement('p');
+        if(element === 'folder') {
+            item = document.createElement('button');
+            item.textContent = 'Main ' + element.toUpperCase();
+            item.classList.add('currentFolder');
+            showFolderList(displayingDiv, item);
+        }
+        else item.textContent = element.toUpperCase();
         header.appendChild(item);
     });
 
+    const todoDiv = document.createElement('div');
+    todoDiv.classList.add('todo-list');
+
     displayingDiv.appendChild(header);
+    displayingDiv.appendChild(todoDiv);
 
     return displayingDiv;
 }
@@ -84,9 +97,55 @@ function createDropdown(dropdown, selectedFolder) {
         option.textContent = folder;
         option.value = folder;
 
-        if(folder === selectedFolder) option.selected = true; 
+        if(folder === selectedFolder) {
+            option.selected = true; 
+            updateFolderList(selectedFolder);
+        }
 
         dropdown.appendChild(option);
     });
+}
+
+function showFolderList(displayingDiv, folderButton) {
+    const folderList = document.createElement('ul');
+    folderList.classList.add('folder-list');
+
+    folders.forEach(folder => {
+        const item = document.createElement('li');
+        const itemButton = document.createElement('button');
+        itemButton.addEventListener('click', () => {
+            displayFolderItems(folder);
+            folderList.style.display = 'none';
+            folderButton.textContent = itemButton.textContent + ' folder';
+        });
+        itemButton.textContent = folder;
+        item.appendChild(itemButton);
+        folderList.appendChild(item);
+    });
+    displayingDiv.appendChild(folderList);
+    folderList.style.display = 'none';
+    
+    folderButton.addEventListener('mouseover', () => {
+        folderList.style.display = 'block';
+    });
+    
+}
+function updateFolderList(item) {
+    if(!document.querySelector('ul')) return;
+
+    const folderButton = document.querySelector('.currentFolder');
+
+    const folderList = document.querySelector('ul')
+    const listItem = document.createElement('li');
+    const itemButton = document.createElement('button');
+    itemButton.textContent = item;
+    itemButton.addEventListener('click', () => {
+        displayFolderItems(itemButton.textContent);
+        folderList.style.display = 'none';
+        folderButton.textContent = itemButton.textContent + ' folder';
+    });
+    listItem.appendChild(itemButton);
+    folderList.appendChild(listItem);
+    
 }
 export {createTodoForm, createTodoDisplay};
